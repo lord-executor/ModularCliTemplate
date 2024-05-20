@@ -1,11 +1,23 @@
 using System.CommandLine;
 using System.CommandLine.Builder;
+using System.CommandLine.IO;
 using System.CommandLine.Parsing;
+using System.Reflection;
 
 using CliTemplate;
 using CliTemplate.Status;
 
-var handlerFactory = new HandlerFactory();
+using Microsoft.Extensions.Configuration;
+
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appSettings.json")
+    .AddJsonFile("secrets.user.json", optional: true)
+    .AddJsonFile("secrets.json", optional: true)
+    .AddJsonFile($"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/{Assembly.GetEntryAssembly()?.GetName().Name ?? "cli"}.json", optional: true)
+    .Build();
+
+var handlerFactory = new HandlerFactory(config);
+
 var rootCommand = new RootCommand("TODO: Custom CLI tool for ???")
 {
     new StatusCommand(handlerFactory),
@@ -24,12 +36,12 @@ var parser = new CommandLineBuilder(rootCommand)
     {
         if (ex is OperationCanceledException)
         {
-            Console.WriteLine("The operation was aborted");
+            ctx.Console.WriteLine("The operation was aborted");
             ctx.ExitCode = ExitCodes.Aborted;
             return;
         }
 
-        Console.Error.WriteLine(ex.ToString());
+        ctx.Console.Error.WriteLine(ex.ToString());
         ctx.ExitCode = ExitCodes.UnhandledException;
     })
     .CancelOnProcessTermination()

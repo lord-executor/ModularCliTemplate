@@ -2,6 +2,7 @@
 using System.CommandLine.Invocation;
 using System.CommandLine.NamingConventionBinder;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CliTemplate;
@@ -10,9 +11,10 @@ public class HandlerFactory
 {
     private readonly ServiceCollection _services;
 
-    public HandlerFactory()
+    public HandlerFactory(IConfigurationRoot config)
     {
         _services = new ServiceCollection();
+        _services.AddSingleton<IConfiguration>(config);
     }
 
     public HandlerFactory Configure(Action<ServiceCollection> configureAction)
