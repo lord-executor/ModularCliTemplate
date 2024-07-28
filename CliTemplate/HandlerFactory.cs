@@ -34,6 +34,11 @@ public class HandlerFactory
 
         return CommandHandler.Create(async (InvocationContext ctx, TArg arg) =>
         {
+            var commonArgs = CommonArgs.Bind(ctx.BindingContext, _config.GetRequiredSection(CliSettings.SectionName).Get<CliSettings>()!);
+            // This allows us to access the CommonArgs from within the exception handler in the Launcher
+            ctx.BindingContext.AddService(_ => commonArgs);
+
+            _services.AddSingleton(commonArgs);
             _services.AddSingleton(arg);
             _services.AddTransient<IConsole>(_ => ctx.BindingContext.GetService<IConsole>()!);
 
