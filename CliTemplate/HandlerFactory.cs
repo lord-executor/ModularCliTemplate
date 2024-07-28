@@ -2,8 +2,11 @@
 using System.CommandLine.Invocation;
 using System.CommandLine.NamingConventionBinder;
 
+using CliTemplate.IO;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CliTemplate;
 
@@ -38,9 +41,12 @@ public class HandlerFactory
             // This allows us to access the CommonArgs from within the exception handler in the Launcher
             ctx.BindingContext.AddService(_ => commonArgs);
 
+            _services.AddSingleton(_config);
             _services.AddSingleton(commonArgs);
             _services.AddSingleton(arg);
-            _services.AddTransient<IConsole>(_ => ctx.BindingContext.GetService<IConsole>()!);
+            _services.AddSingleton<ICliLogger>(_ => new CliLogger(ctx.Console, commonArgs.ToLogLevel()));
+            // This allows injecting the ICliLogger as a normal ILogger
+            _services.AddSingleton<ILogger>(provider => provider.GetRequiredService<ICliLogger>());
 
             foreach (var mod in modules())
             {

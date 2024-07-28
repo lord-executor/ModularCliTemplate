@@ -7,7 +7,9 @@ namespace CliTemplate;
 
 public class CommonArgs
 {
-    private static readonly Option<string?> VerbosityOption = new Option<string?>(["--verbosity", "-v"], () => null);
+    // See https://learn.microsoft.com/en-us/dotnet/standard/commandline/syntax#the---verbosity-option
+    private static readonly Option<string?> VerbosityOption = new Option<string?>(["--verbosity", "-v"], () => null, "Output verbosity Q(uiet), M(inimal), N(ormal), D(etailed) or Diag(nostic)");
+
     public string Verbosity { get; set; } = string.Empty;
 
     public static void Declare(Command command)

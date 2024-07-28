@@ -1,25 +1,29 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 
+using CliTemplate.IO;
+
+using Microsoft.Extensions.Logging;
+
 namespace CliTemplate.Status;
 
 public class StatusHandler : ISimpleHandler<StatusArgs>
 {
-    private readonly IConsole _console;
+    private readonly ICliLogger _logger;
     private readonly DelayConfig _config;
 
-    public StatusHandler(IConsole console, DelayConfig config)
+    public StatusHandler(ICliLogger logger, DelayConfig config)
     {
-        _console = console;
+        _logger = logger;
         _config = config;
-        _console.WriteLine("StatusHandler created with console");
+        _logger.LogInformation("StatusHandler created with CLI logger");
     }
 
     public async Task<int> RunAsync(InvocationContext context, StatusArgs args, CancellationToken cancellationToken = default)
     {
-        _console.WriteLine("Hello StatusHandler!");
+        _logger.LogContent("Hello StatusHandler!");
         await Task.Delay(_config.Delay, cancellationToken);
-        _console.WriteLine("Done");
+        _logger.LogContent("Done");
 
         return ExitCodes.Ok;
     }
