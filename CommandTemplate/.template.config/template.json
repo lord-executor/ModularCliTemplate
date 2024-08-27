@@ -1,0 +1,56 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "https://github.com/lord-executor",
+    "classifications": [
+        "Common",
+        "Code"
+    ],
+    "identity": "CliTemplate.CmdTpl",
+    "name": "Modular CLI command template.",
+    "shortName": "modclicmd",
+    "sourceName": "CmdTpl",
+    "tags": {
+        "language": "C#",
+        "type": "item"
+    },
+    "symbols": {
+        "Namespace": {
+            "type": "parameter",
+            "description": "The target namespace for the command.",
+            "datatype": "text",
+            "replaces": "CmdNs",
+            "defaultValue": "App"
+        },
+        "RootNamespace": {
+            "type": "generated",
+            "generator": "regex",
+            "dataType": "string",
+            "replaces": "AppRootNs",
+            "parameters": {
+                "source": "Namespace",
+                "steps": [
+                    {
+                        "regex": "^([^.]+).*$",
+                        "replacement": "$1"
+                    }
+                ]
+            }
+        },
+        "CommandDescription": {
+            "type": "parameter",
+            "description": "The description of the command.",
+            "datatype": "text",
+            "replaces": "cmddesc",
+            "defaultValue": "TODO: description"
+        },
+        "CommandNameLowerCase": {
+            "type": "generated",
+            "generator": "casing",
+            "parameters": {
+                "source": "name",
+                "toLower": true
+            },
+            "replaces": "cmdname"
+        }
+    }
+}
