@@ -1,5 +1,13 @@
 # Modular CLI Template
 
+Building simple command line tools with .NET is easy. Building advanced command line tools with many commands and subcommands, output with ANSI coloring, dependency injection and separation of concerns is much more difficult. And doing all of that in a _modular_, extensible and maintainable way is even harder. This is where the modular CLI template comes in.
+
+This project serves as a template for building advanced CLI tools which can be created with `dotnet new ...`. The project is based on
+- The [System.CommandLine](https://learn.microsoft.com/en-us/dotnet/standard/commandline/) library
+- `Microsoft.Extensions` for dependency injection, logging and configuration management
+
+While the template can of course be used as-is, the main point of this being a _template_ is that you can customize it at will. The files provide a basic skeleton for _structuring_ a CLI tool without prescribing too much.
+
 ## Instantiate with `dotnet new ...`
 
 The template can easily be used as a template with the `dotnet new` command. To do that, you first need to install it.
