@@ -1,6 +1,7 @@
 using System.CommandLine;
 
 using CliTemplate;
+using CliTemplate.GitInfo;
 using CliTemplate.Status;
 
 var launcher = new Launcher();
@@ -8,6 +9,7 @@ var launcher = new Launcher();
 var rootCommand = new RootCommand("TODO: Custom CLI tool for ???")
 {
     new StatusCommand(launcher.HandlerFactory),
+    new GitInfoCommand(launcher.HandlerFactory),
 };
 CommonArgs.Declare(rootCommand);
 rootCommand.Name = "CliTemplate";
