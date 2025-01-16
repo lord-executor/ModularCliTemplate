@@ -16,7 +16,7 @@ public class GitInfoCommand : Command, IServiceModule
         Handler = handlerFactory.SimpleHandler<GitInfoHandler, GitInfoArgs>(() => [this]);
     }
 
-    void IServiceModule.ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+    void IServiceModule.ConfigureServices(IServiceCollection services, IConfiguration config)
     {
         services.AddSingleton(new Settings());
         services.AddSingleton<ICommandRunner, CommandRunner>();

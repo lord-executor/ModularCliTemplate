@@ -14,7 +14,7 @@ public class StatusCommand : Command, IServiceModule
         Handler = handlerFactory.SimpleHandler<StatusHandler, StatusArgs>(() => [this]);
     }
 
-    void IServiceModule.ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+    void IServiceModule.ConfigureServices(IServiceCollection services, IConfiguration config)
     {
         services.AddSingleton(new DelayConfig(config));
     }

@@ -15,7 +15,7 @@ public class Launcher
 
     public Launcher()
     {
-        IConfigurationRoot config = new ConfigurationBuilder()
+        var config = new ConfigurationBuilder()
             .AddJsonFile("appSettings.json")
             .AddJsonFile("secrets.user.json", optional: true)
             .AddJsonFile("secrets.json", optional: true)

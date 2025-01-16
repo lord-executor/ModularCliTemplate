@@ -5,5 +5,5 @@ namespace CliTemplate;
 
 public interface IServiceModule
 {
-    void ConfigureServices(IServiceCollection services, IConfigurationRoot config);
+    void ConfigureServices(IServiceCollection services, IConfiguration config);
 }
