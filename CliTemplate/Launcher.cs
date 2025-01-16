@@ -1,11 +1,14 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
-using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Reflection;
 
+using CliTemplate.IO;
+
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CliTemplate;
 
@@ -47,14 +50,30 @@ public class Launcher
 
     private static void OnException(Exception ex, InvocationContext ctx)
     {
-        if (ex is OperationCanceledException)
+        var commonArgs = ctx.BindingContext.GetService<CommonArgs>();
+        var logLevel = commonArgs?.ToLogLevel() ?? LogLevel.Information;
+        var logger = new CliLogger(ctx.Console, logLevel);
+
+        if (ex is OperationCanceledException canceledException)
         {
-            ctx.Console.WriteLine("The operation was aborted");
+            logger.LogWarning($"The operation was aborted - {canceledException.Message}");
             ctx.ExitCode = ExitCodes.Aborted;
             return;
         }
 
-        ctx.Console.Error.WriteLine(ex.ToString());
+        LogException(logger, logLevel, ex);
         ctx.ExitCode = ExitCodes.UnhandledException;
+    }
+
+    private static void LogException(ICliLogger logger, LogLevel logLevel, Exception e)
+    {
+        if (logLevel <= LogLevel.Debug)
+        {
+            logger.LogError(e, e.ToString());
+        }
+        else if (logLevel <= LogLevel.Error)
+        {
+            logger.LogError(e.Message);
+        }
     }
 }
