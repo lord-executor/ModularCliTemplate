@@ -22,11 +22,11 @@ public class StatusHandler : ISimpleHandler<StatusArgs>
         _logger.LogInformation("StatusHandler created with CLI logger");
     }
 
-    public async Task<int> RunAsync(InvocationContext context, StatusArgs args, CancellationToken cancellationToken = default)
+    public async Task<int> RunAsync(InvocationContext context, StatusArgs args, CancellationToken ct = default)
     {
         _logger.LogContent("Hello StatusHandler!");
-        await Task.Delay(_config.Delay, cancellationToken);
-        await _childLauncher.RunAsync(context, new GitInfoArgs(), cancellationToken);
+        await Task.Delay(_config.Delay, ct);
+        await _childLauncher.RunAsync(context, new GitInfoArgs(), ct);
         _logger.LogContent("Done");
 
         return ExitCodes.Ok;
