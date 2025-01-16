@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CliTemplate;
 
-public class HandlerFactory
+public class HandlerFactory : IChildLauncher
 {
     private readonly IConfiguration _config;
     private readonly ServiceCollection _services;
@@ -25,6 +25,7 @@ public class HandlerFactory
         _services.AddSingleton(_config);
         _services.AddSingleton(new Settings());
         _services.AddSingleton<ICommandRunner, CommandRunner>();
+        _services.AddSingleton<IChildLauncher>(this);
     }
 
     public ICommandHandler SimpleHandler<THandler, TArg>()
@@ -46,12 +47,17 @@ public class HandlerFactory
 
         return CommandHandler.Create(async (InvocationContext ctx, TArg arg) =>
         {
-            var provider = EnsureServiceProvider(ctx);
-
-            using var scope = provider.CreateScope();
-            var handler = scope.ServiceProvider.GetRequiredService<ISimpleHandler<TArg>>();
-            return await handler.RunAsync(ctx, arg, ctx.GetCancellationToken());
+            return await RunAsync(ctx, arg, ctx.GetCancellationToken());
         });
+    }
+
+    public async Task<int> RunAsync<TArg>(InvocationContext ctx, TArg arg, CancellationToken ct)
+    {
+        var provider = EnsureServiceProvider(ctx);
+
+        using var scope = provider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<ISimpleHandler<TArg>>();
+        return await handler.RunAsync(ctx, arg, ct);
     }
 
     private IServiceProvider EnsureServiceProvider(InvocationContext ctx)
