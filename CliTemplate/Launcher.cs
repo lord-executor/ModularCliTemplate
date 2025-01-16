@@ -54,15 +54,21 @@ public class Launcher
         var logLevel = commonArgs?.ToLogLevel() ?? LogLevel.Information;
         var logger = new CliLogger(ctx.Console, logLevel);
 
-        if (ex is OperationCanceledException canceledException)
+        switch (ex)
         {
-            logger.LogWarning($"The operation was aborted - {canceledException.Message}");
-            ctx.ExitCode = ExitCodes.Aborted;
-            return;
+            case OperationCanceledException cEx:
+                logger.LogWarning($"The operation was aborted - {cEx.Message}");
+                ctx.ExitCode = ExitCodes.Aborted;
+                return;
+            case CommandFailureException cfEx:
+                LogException(logger, logLevel, cfEx);
+                ctx.ExitCode = cfEx.ExitCode;
+                return;
+            default:
+                LogException(logger, logLevel, ex);
+                ctx.ExitCode = ExitCodes.UnhandledException;
+                break;
         }
-
-        LogException(logger, logLevel, ex);
-        ctx.ExitCode = ExitCodes.UnhandledException;
     }
 
     private static void LogException(ICliLogger logger, LogLevel logLevel, Exception e)
