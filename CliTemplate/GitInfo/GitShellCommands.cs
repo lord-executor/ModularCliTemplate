@@ -28,9 +28,10 @@ public class GitShellCommands
         return ShellExecute("describe --tags --dirty --always", targetDirectory, ct);
     }
 
-    private async Task<string> ShellExecute(string args, string? targetDirectory, CancellationToken ct = default)
+    private Task<string> ShellExecute(string args, string? targetDirectory, CancellationToken ct = default)
     {
-        return (await _shell.CaptureAsync(Command.Create(GitExecutable, PrependTarget(args, targetDirectory)), ct)).Output?.Trim() ?? string.Empty;
+        return _shell.Bind(Command.Create(GitExecutable, PrependTarget(args, targetDirectory)))
+            .CaptureAsStringAsync(ct);
     }
 
     private static IEnumerable<string> PrependTarget(string args, string? targetDirectory)
