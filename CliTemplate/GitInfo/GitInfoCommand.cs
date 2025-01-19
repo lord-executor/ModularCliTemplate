@@ -1,6 +1,4 @@
-﻿using Larcanum.ShellToolkit;
-
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Command = System.CommandLine.Command;
@@ -16,9 +14,8 @@ public class GitInfoCommand : Command, IServiceModule
         Handler = handlerFactory.SimpleHandler<GitInfoHandler, GitInfoArgs>(() => [this]);
     }
 
-    void IServiceModule.ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+    void IServiceModule.ConfigureServices(IServiceCollection services, IConfiguration config)
     {
-        services.AddSingleton(new Settings());
-        services.AddSingleton<ICommandRunner, CommandRunner>();
+        services.AddScoped<GitShellCommands>();
     }
 }
