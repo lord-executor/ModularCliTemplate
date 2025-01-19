@@ -16,6 +16,7 @@ public class HandlerFactory : IChildLauncher
 {
     private readonly IConfiguration _config;
     private readonly ServiceCollection _services;
+    private readonly HashSet<string> _loadedModules = new HashSet<string>();
     private IServiceProvider? _serviceProvider;
 
     public HandlerFactory(IConfiguration config)
@@ -42,7 +43,12 @@ public class HandlerFactory : IChildLauncher
         _services.AddScoped<ISimpleHandler<TArg>, THandler>();
         foreach (var mod in modules())
         {
-            mod.ConfigureServices(_services, _config);
+            var moduleKey = mod.GetType().FullName ?? mod.ToString();
+            if (moduleKey == null || !_loadedModules.Contains(moduleKey))
+            {
+                mod.ConfigureServices(_services, _config);
+                _loadedModules.Add(moduleKey ?? string.Empty);
+            }
         }
 
         return CommandHandler.Create(async (InvocationContext ctx, TArg arg) =>
