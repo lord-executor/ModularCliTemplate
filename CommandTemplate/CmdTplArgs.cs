@@ -1,13 +1,13 @@
-﻿using System.CommandLine;
+﻿using Larcanum.ShellToolkit.Terminal.Integration;
 
 namespace CmdNs;
 
-public class CmdTplArgs
+public class CmdTplArgs : IArguments<CmdTplArgs>
 {
     public string Name { get; set; } = "World";
 
-    public static void Declare(Command command)
+    public static IEnumerable<ISymbolBinding<CmdTplArgs>> Register(BindingBuilder<CmdTplArgs> builder)
     {
-        command.AddOption(new Option<string>("--name", () => "World"));
+        yield return builder.BindOption(x => x.Name, "--name", "Name option description");
     }
 }
