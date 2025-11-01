@@ -1,28 +1,19 @@
-using System.CommandLine;
-using System.CommandLine.Binding;
+using Larcanum.ShellToolkit.Terminal.Integration;
 
 using Microsoft.Extensions.Logging;
 
 namespace CliTemplate;
 
-public class CommonArgs
+public class CommonArgs : IArguments<CommonArgs>
 {
     // See https://learn.microsoft.com/en-us/dotnet/standard/commandline/syntax#the---verbosity-option
-    private static readonly Option<string?> VerbosityOption = new Option<string?>(["--verbosity", "-v"], () => null, "Output verbosity Q(uiet), M(inimal), N(ormal), D(etailed) or Diag(nostic)");
-
     public string Verbosity { get; set; } = string.Empty;
 
-    public static void Declare(Command command)
-    {
-        command.AddGlobalOption(VerbosityOption);
-    }
 
-    public static CommonArgs Bind(BindingContext bindingContext, CliSettings settings)
+    public static IEnumerable<ISymbolBinding<CommonArgs>> Register(BindingBuilder<CommonArgs> builder)
     {
-        return new CommonArgs
-        {
-            Verbosity = bindingContext.ParseResult.GetValueForOption(VerbosityOption) ?? settings.DefaultVerbosity
-        };
+        yield return builder.BindOption(x => x.Verbosity, "--verbosity", "Output verbosity Q(uiet), M(inimal), N(ormal), D(etailed) or Diag(nostic)")
+            .WithAlias("-v");
     }
 
     public LogLevel ToLogLevel()

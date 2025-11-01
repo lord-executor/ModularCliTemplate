@@ -1,13 +1,13 @@
-﻿using System.CommandLine;
+﻿using Larcanum.ShellToolkit.Terminal.Integration;
 
 namespace CliTemplate.GitInfo;
 
-public class GitInfoArgs
+public class GitInfoArgs : IArguments<GitInfoArgs>
 {
     public string? Path { get; set; }
 
-    public static void Declare(Command command)
+    public static IEnumerable<ISymbolBinding<GitInfoArgs>> Register(BindingBuilder<GitInfoArgs> builder)
     {
-        command.AddOption(new Option<string>("--path", "Path to git repository"));
+        yield return builder.BindOption(x => x.Path, "--path", "Path to git repository");
     }
 }

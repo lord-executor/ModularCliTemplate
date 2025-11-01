@@ -30,7 +30,7 @@ dotnet run
 ## Creating Commands with `dotnet new ...`
 
 1. Navigate to the `CommandTemplate` directory
-2. Run `dotnent new install . --force` to install / update the template
+2. Run `dotnet new install . --force` to install / update the template
 
 In your modular CLI project, you can now create a new command with an arguments and handler class with
 

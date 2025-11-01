@@ -1,20 +1,27 @@
 ﻿using System.CommandLine;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Larcanum.ShellToolkit.Terminal.Integration;
+using Larcanum.ShellToolkit.Terminal.Rendering;
+
+using Microsoft.Extensions.Logging;
 
 namespace CmdNs;
 
-public class CmdTplCommand : Command, IServiceModule
+public class CmdTplCommand : ICommand<CmdTplArgs>
 {
-    public CmdTplCommand(HandlerFactory handlerFactory)
-        : base("cmdname", "cmddesc")
+    public static CommandDefinition<CmdTplCommand, CmdTplArgs> Def = new Command("cmdname", "cmddesc");
+
+    private readonly ICliLogger _logger;
+
+    public CmdTplCommand(ICliLogger logger)
     {
-        CmdTplArgs.Declare(this);
-        Handler = handlerFactory.SimpleHandler<CmdTplHandler, CmdTplArgs>(() => [this]);
+        _logger = logger;
+        _logger.LogInformation("CmdTplHandler created with CLI logger");
     }
 
-    void IServiceModule.ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+    public async Task<int> RunAsync(CmdTplArgs args, CancellationToken cancellationToken = default)
     {
+        _logger.LogContent($"Hello {args.Name}!");
+        return ExitCodes.Ok;
     }
 }
