@@ -1,21 +1,37 @@
 ﻿using System.CommandLine;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using CliTemplate.GitInfo;
+
+using Larcanum.ShellToolkit.Terminal.Integration;
+using Larcanum.ShellToolkit.Terminal.Rendering;
+
+using Microsoft.Extensions.Logging;
 
 namespace CliTemplate.Status;
 
-public class StatusCommand : Command, IServiceModule
+public class StatusCommand : ICommand<StatusArgs>
 {
-    public StatusCommand(HandlerFactory handlerFactory)
-        : base("status", "Gets the status")
+    public static CommandDefinition<StatusCommand, StatusArgs> Def = new Command("status", "Gets the status");
+
+    private readonly ICliLogger _logger;
+    private readonly IChildLauncher _childLauncher;
+    private readonly DelayConfig _config;
+
+    public StatusCommand(ICliLogger logger, IChildLauncher childLauncher, DelayConfig config)
     {
-        StatusArgs.Declare(this);
-        Handler = handlerFactory.SimpleHandler<StatusHandler, StatusArgs>(() => [this]);
+        _logger = logger;
+        _childLauncher = childLauncher;
+        _config = config;
+        _logger.LogInformation("StatusHandler created with CLI logger");
     }
 
-    void IServiceModule.ConfigureServices(IServiceCollection services, IConfiguration config)
+    public async Task<int> RunAsync(StatusArgs args, CancellationToken ct = default)
     {
-        services.AddSingleton(new DelayConfig(config));
+        _logger.LogContent("Hello StatusHandler!");
+        await Task.Delay(_config.Delay, ct);
+        await _childLauncher.RunAsync(GitInfoCommand.Def, new GitInfoArgs(), ct);
+        _logger.LogContent("Done");
+
+        return ExitCodes.Ok;
     }
 }

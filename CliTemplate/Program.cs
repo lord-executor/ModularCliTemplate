@@ -1,22 +1,14 @@
-using System.CommandLine;
-
 using CliTemplate;
 using CliTemplate.GitInfo;
 using CliTemplate.Status;
 
-var launcher = new Launcher();
+using Larcanum.ShellToolkit.Terminal;
 
-var rootCommand = new RootCommand("TODO: Custom CLI tool for ???")
-{
-    new StatusCommand(launcher.HandlerFactory),
-    new GitInfoCommand(launcher.HandlerFactory),
-};
-CommonArgs.Declare(rootCommand);
-rootCommand.Name = "CliTemplate";
-// As of version 2.0.0-beta4.22272.1, the only way to allow additional arguments to actually work is to set the
-// property on the ROOT command.
-// See https://github.com/dotnet/command-line-api/blob/2.0.0-beta4.22272.1/src/System.CommandLine/Parsing/ParseResult.cs#L68
-// This might change in a future release.
-rootCommand.TreatUnmatchedTokensAsErrors = false;
 
-return await launcher.InvokeAsync(rootCommand, args);
+var bootModule = new LauncherModule();
+var launcher = new Launcher(bootModule);
+
+bootModule.RootCommand.Add(launcher.Register(StatusCommand.Def));
+bootModule.RootCommand.Add(launcher.Register(GitInfoCommand.Def));
+
+return await launcher.RunAsync(bootModule.RootCommand, args);
