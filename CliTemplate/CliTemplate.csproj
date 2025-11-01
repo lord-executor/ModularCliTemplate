@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Larcanum.ShellToolkit" Version="1.3.0-beta.3" />
-      <PackageReference Include="Larcanum.ShellToolkit.Terminal" Version="1.3.0-beta.3" />
+      <PackageReference Include="Larcanum.ShellToolkit" Version="1.3.0" />
+      <PackageReference Include="Larcanum.ShellToolkit.Terminal" Version="1.3.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
       <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.10" />
